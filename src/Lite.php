@@ -101,21 +101,51 @@ class Lite {
         $objPHPExcel = $this->PHPExcel;
 
         //设置表头
-        $key = ord("A");
+        $key = ord("A");//A--65
+        $key2 = ord("@");
+
         foreach ($headArr as $v) {
-            $colum = chr($key);
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($colum . '1', $v);
+            if($key>ord("Z")){
+                $key2 += 1;
+                $key = ord("A");
+                $colum = chr($key2).chr($key);//超过26个字母时才会启用  dingling 20150626
+            }else {
+                if ($key2 >= ord("A")) {
+                    $colum = chr($key2) . chr($key);
+                } else {
+                    $colum = chr($key);
+                }
+            }
+
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue( $colum . '1', $v);
+
             $key += 1;
         }
 
         $column      = 2;
         $objActSheet = $objPHPExcel->getActiveSheet();
         foreach ($data as $key => $rows) { //行写入
+
             $span = ord("A");
+            $span2 = ord("@");
+
             foreach ($rows as $keyName => $value) {// 列写入
-                $j = chr($span);
+
+                if($span>ord("Z")){
+                    $span2 += 1;
+                    $span = ord("A");
+                    $j = chr($span2).chr($span);//超过26个字母时才会启用  dingling 20150626
+                }else{
+                    if($span2 >= ord("A")){
+                        $j = chr($span2).chr($span);
+                    }else{
+                        $j = chr($span);
+                    }
+                }
+
                 $objActSheet->setCellValue($j . $column, $value);
 				$objActSheet->getColumnDimension($j)->setAutoSize(true);
+
                 $span++;
             }
             $column++;
